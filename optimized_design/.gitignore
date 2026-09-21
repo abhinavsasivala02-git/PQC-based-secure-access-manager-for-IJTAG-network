@@ -1,0 +1,17 @@
+# Simulation build output (Icarus / Vivado / Xcelium)
+*.vvp
+*.log
+!vivado_sim_*.log
+*.err
+xsim.dir/
+work/
+.Xil/
+*.jou
+*.pb
+
+# Python
+__pycache__/
+*.pyc
+
+# Go build cache (if building go/ locally)
+go.sum

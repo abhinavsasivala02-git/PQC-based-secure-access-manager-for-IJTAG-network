@@ -1,0 +1,74 @@
+OPTIMIZED DESIGN - maximum performance (2026-09-19)
+
+Vivado xsim 2023.2, 100 MHz TCK -> TB: PASS - ALL TEST CASES PASSED (47 PASS)
+  ML-KEM encapsulation    49,656 cyc    497 us
+  Frame shift-in          26,567 cyc    266 us
+  ML-DSA-65 verify       109,145 cyc  1,091 us
+  UNLOCKED at t = 1.886 ms
+  Baseline before this work: 4.943 ms  (2.6x faster)
+  Paper figure:              3.35 ms   (1.8x faster)
+Transcript: vivado_sim_1886us.log
+Companion build: original_design (3.35 ms, the latency in the paper)
+
+RTL IS IDENTICAL IN BOTH FOLDERS. They differ only in two parameter defaults
+of PQC_integrated/rtl_mldsa/ntt_core.v (the ML-DSA butterfly issue rate):
+    original_design  : BF_II = 7, BF_II_NUM = 5, BF_II_DEN = 8
+    optimized_design : BF_II = 2, BF_II_NUM = 0, BF_II_DEN = 8
+Every setting produces bit-identical NTT results; only the timing changes.
+
+SHARED KECCAK
+  design/keccak_shared.v holds the design's single Keccak-f[1600] permutation
+  core. Six hash users arbitrate for it:
+    ML-KEM  H (SHA3-256), G (SHA3-512), PRF (SHAKE-256), SampleNTT (SHAKE-128)
+    ML-DSA  shake_unified (SHAKE-128 ExpandA + SHAKE-256)
+    TDO     shake_stream (SHAKE-256 stream cipher)
+  They are mutually exclusive in time, as the ITC paper describes. Before this
+  change the design instantiated SIX separate Keccak cores, so the paper's
+  "single shared Keccak-f[1600]" and its ~0.166 mm2 saving did not match the
+  RTL. Arbitration costs ~0.3% latency (ML-KEM 49,524 -> 49,656 cycles).
+
+BUG FIXES (both folders)
+  - mlkem_encaps.v: ML-KEM was NOT FIPS 203 compliant. The H()/G() feed used a
+    skewed valid/ready handshake (H absorbed 1185 bytes with ek[0] repeated)
+    and ST_ENCRYPT primed an extra unrequested ek byte into kpke_encrypt.
+    Wrong H(ek) -> wrong K and r -> a ciphertext no standard implementation
+    could decapsulate. Fixed and KAT-verified.
+  - verify_ctrl.v: VF_COMPARE compared only c_tilde[255:0]; ML-DSA-65 uses a
+    48-byte c_tilde, so 128 bits of the challenge hash went unchecked. All 384
+    bits are now compared.
+  - PQC_integrated/rtl_mldsa/ was missing from the repo entirely (nothing could
+    compile); restored from Desktop/PAPER/Paper_merge/PAPER_GITHUB.
+  - run_xsim.bat looked for the .mem vectors in the wrong directory.
+  - run_xrun.sh had // comments before the shebang and used XCELIUM_HOME as if
+    it were the xrun binary path.
+
+SPEED WORK (both folders, all bit-exact or KAT-verified)
+  ML-DSA (rtl_mldsa/)
+    - ntt_core.v     pipelined butterfly loop (NTT 10,752 -> 2,362 cycles,
+                     INTT 11,016 -> 2,626 at BF_II=2), fractional pacing knob
+    - verify_ctrl.v  ExpandA rejection sampling from a two-lane sliding window:
+                     1 candidate/cycle instead of 4 (the SHAKE-128 rate is
+                     168 B = 56 x 3 B, so a group never spans a block)
+  ML-KEM (rtl_mlkem/)  131,652 -> 49,656 cycles
+    - ntt_core.v     pipelined, 2 cyc/butterfly (NTT 6,280 -> 1,835)
+    - poly_basemul.v 1 coefficient/cycle, 3-stage pipeline
+    - poly_arith.v   1 coefficient/cycle
+    - compress.v     1 coefficient/cycle
+    - byte_decode.v  ~1 byte/cycle (was ~6)
+    - byte_encode.v  ~1 byte/cycle (was ~4)
+    - kpke_encrypt.v accumulator operands read on RAM port B so port A is free
+                     for the write-back in the same cycle
+
+VERIFICATION
+  - Vivado xsim 2023.2 system testbench: 47 PASS, ALL TEST CASES PASSED
+  - ML-KEM: 3-vector FIPS 203 KAT (ciphertext + shared secret K),
+    PQC_integrated/tb/kem_kat/run_kem_kat.bat
+  - Both NTT rewrites diffed cycle-by-cycle against the original cores on
+    random polynomials (forward + inverse): bit-identical
+  - ML-DSA verification exercised by the genuine NIST KAT signature in the
+    system testbench (accepted) and a corrupted one (rejected)
+
+NOT VERIFIED HERE
+  - Area, power and the 100 MHz critical path. Those need Genus + SAED 90nm;
+    only simulation was run. With the Keccak now genuinely shared, the paper's
+    area figures are worth re-running.

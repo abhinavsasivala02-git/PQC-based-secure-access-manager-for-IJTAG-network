@@ -1,0 +1,125 @@
+#-----------------------------------------------------------
+# xsim v2023.2 (64-bit)
+# SW Build 4029153 on Fri Oct 13 20:14:34 MDT 2023
+# IP Build 4028589 on Sat Oct 14 00:45:43 MDT 2023
+# SharedData Build 4025554 on Tue Oct 10 17:18:54 MDT 2023
+# Start of session at: Sat Sep 19 19:19:59 2026
+# Process ID: 6728
+# Current directory: C:/Users/abhin/Desktop/GITHUB/PAPER_GITHUB/PQC_integrated/tb
+# Command line: xsim.exe -log sim.log -mode tcl -source {xsim.dir/sim/xsim_script.tcl}
+# Log file: C:/Users/abhin/Desktop/GITHUB/PAPER_GITHUB/PQC_integrated/tb/sim.log
+# Journal file: C:/Users/abhin/Desktop/GITHUB/PAPER_GITHUB/PQC_integrated/tb\xsim.jou
+# Running On: Abhinav_S, OS: Windows, CPU Frequency: 2496 MHz, CPU Physical cores: 8, Host memory: 16961 MB
+#-----------------------------------------------------------
+source xsim.dir/sim/xsim_script.tcl
+# xsim {sim} -autoloadwcfg -runall
+Time resolution is 1 ps
+run -all
+TB: PASS - reference Keccak-f[1600](0) matches known vector
+TB: PASS - reference SHAKE-256("abc") matches NIST vector
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=x
+TB: provisioning OTP (ek, vksign, cluster key, inst, data)...
+TB: PASS - OTP provisioned & locked (programmed=1)
+TB: PASS - key_state=0 before first unlock
+TB: PASS - OTP contents match provisioned ek/vksign/key/inst/data
+TB: reset released, boot-load + ML-KEM encapsulating...
+TB: boot-load done (pk_reg filled)
+TB: ML-KEM encapsulation done at t=528415000
+TB: PASS - boot-load latched vksign/cluster key/inst/data correctly
+TB: PASS - ML-KEM encaps completed, KDF key nonzero (00000081...)
+TB: PASS - ciphertext shifted out via TDO (1088 bytes)
+TB: shifting 26,567-bit unlock frame (key=0xcafebabe, inst=0xef67ab01, data=0x77b3d500)
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: *** UNLOCKED at t=3348575000 (CLUS_SEL=00) ***
+TB: PASS - cluster 0 selected (CLUS_SEL=00)
+TB: PASS - key_state=1 irrevocably set in OTP on first unlock
+TB: AM state=5 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: SHAKE-256 stream cipher initialized (ks_valid=1, busy=0)
+TB: PASS - per-session TRNG IV latched (0000009e...)
+TB: PASS - high-priority cluster output encrypted for every sampled bit
+TB: PASS - encrypted TDO differs from raw chain output (cipher active)
+TB: PASS - TDO mux equation holds (tdo == chain ^ ks_bit when eligible)
+TB: PASS - keystream bytes match independent SHAKE-256(key||iv) reference
+TB: PASS - priority decoder maps inst_idx -> priority & DONE correctly
+TB: PASS - raw chain carries the shifted pattern (pipeline delay present)
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - key_state=1 persists across reset (irrevocable)
+TB: [cl1] unlock with KDF key 0x6ed3678c
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - cluster 1 selected (CLUS_SEL=01)
+TB: AM state=5 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - mixed cluster switches encryption by per-instrument priority
+TB: PASS - TDO mux equation holds (tdo == chain ^ ks_bit when eligible)
+TB: PASS - keystream bytes match independent SHAKE-256(key||iv) reference
+TB: PASS - priority decoder maps inst_idx -> priority & DONE correctly
+TB: PASS - raw chain carries the shifted pattern (pipeline delay present)
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [cl2] unlock with KDF key 0x6ed3678c
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - cluster 2 selected (CLUS_SEL=10)
+TB: AM state=5 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - low-priority cluster output stays raw (no encryption)
+TB: PASS - TDO mux equation holds (tdo == chain ^ ks_bit when eligible)
+TB: PASS - keystream bytes match independent SHAKE-256(key||iv) reference
+TB: PASS - priority decoder maps inst_idx -> priority & DONE correctly
+TB: PASS - raw chain carries the shifted pattern (pipeline delay present)
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [cl3] unlock with inst[3] (edge CLUS_SEL=11)
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - cluster 3 selected (CLUS_SEL=11, no MSIB active)
+TB: AM state=5 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - no instrument eligible for encryption at CLUS_SEL=11
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [replay] re-unlock cluster 0 with a fresh KDF key
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=5 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: PASS - new unlock session uses a fresh TRNG IV (session replay resistant)
+TB: PASS - keystream differs across sessions (no ciphertext reuse)
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=0 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [neg 000a] PASS - rejected (unlocked=0)
+TB: [neg 000a] PASS - AM back in LOCK
+TB: [neg 000a] PASS - TDO junk-masked while locked
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=0 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [neg 000b] PASS - rejected (unlocked=0)
+TB: [neg 000b] PASS - AM back in LOCK
+TB: [neg 000b] PASS - TDO junk-masked while locked
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=0 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [neg 000c] PASS - rejected (unlocked=0)
+TB: [neg 000c] PASS - AM back in LOCK
+TB: [neg 000c] PASS - TDO junk-masked while locked
+TB: AM state=1 sval=0 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=2 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=3 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: AM state=4 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [neg 000d] PASS - rejected (unlocked=0)
+TB: [neg 000d] PASS - AM back in LOCK
+TB: AM state=0 sval=1 mldsa_busy=0 mldsa_done=0 vc_state=0
+TB: [neg 000d] PASS - TDO junk-masked while locked
+TB: PASS - ALL TEST CASES PASSED (provision, boot, KEM, unlock x4, encryption, priority decoder, IV replay, negatives)
+$finish called at time : 29887916 ns : File "C:/Users/abhin/Desktop/GITHUB/PAPER_GITHUB/PQC_integrated/tb/integrated_top_tb.v" Line 841
+run: Time (s): cpu = 00:00:00 ; elapsed = 00:01:33 . Memory (MB): peak = 206.672 ; gain = 0.000
+exit
+INFO: xsimkernel Simulation Memory Usage: 12284 KB (Peak: 12284 KB), Simulation CPU Usage: 78906 ms
+INFO: [Common 17-206] Exiting xsim at Sat Sep 19 19:21:34 2026...
